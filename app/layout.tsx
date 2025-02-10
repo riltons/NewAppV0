@@ -1,6 +1,7 @@
 import "./globals.css"
 import { Inter } from "next/font/google"
-import type React from "react" // Import React
+import type React from "react"
+import { AppProvider } from "@/contexts/AppContext" // Import AppProvider
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -16,7 +17,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <AppProvider>{children}</AppProvider> {/* Wrap children with AppProvider */}
+      </body>
     </html>
   )
 }

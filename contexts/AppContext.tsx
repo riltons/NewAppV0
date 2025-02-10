@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect } from "react"
 import { User } from "@supabase/supabase-js"
 import { supabase } from "@/lib/supabase"
-import type { Community, Player } from "@/types"
+import type { Community, Player, Competition, Game } from "@/types"
 
 interface AppContextType {
   user: User | null
@@ -14,6 +14,12 @@ interface AppContextType {
   setCurrentPlayer: (player: Player | null) => void
   loading: boolean
   error: string | null
+  communities: Community[]
+  setCommunities: (communities: Community[]) => void
+  competitions: Competition[]
+  setCompetitions: (competitions: Competition[]) => void
+  games: Game[]
+  setGames: (games: Game[]) => void
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -24,6 +30,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [communities, setCommunities] = useState<Community[]>([])
+  const [competitions, setCompetitions] = useState<Competition[]>([])
+  const [games, setGames] = useState<Game[]>([])
 
   useEffect(() => {
     try {
@@ -67,6 +76,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setCurrentPlayer,
     loading,
     error,
+    communities,
+    setCommunities,
+    competitions,
+    setCompetitions,
+    games,
+    setGames,
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
