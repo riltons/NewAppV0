@@ -1,0 +1,14 @@
+supabase em riltons@gmail.com
+
+Project ID
+lqiacjwmrqnsnzzxmwgv
+
+bd
+YaanzgJUXIJjsRWT
+
+URL
+https://lqiacjwmrqnsnzzxmwgv.supabase.co
+
+anonpublic
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxxaWFjandtcnFuc256enhtd2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkxNzgwNzksImV4cCI6MjA1NDc1NDA3OX0.e6SfSNczPURIIXAbwsH0sn-bogSX49_4ofIkZvVQZ8E
+

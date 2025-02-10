@@ -1,17 +1,26 @@
 import { createClient } from "@supabase/supabase-js"
+import type { Database } from "@/types/supabase"
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-export const isSupabaseConfigured = !!supabaseUrl && !!supabaseAnonKey
-
-let supabase: ReturnType<typeof createClient> | null = null
-
-if (isSupabaseConfigured) {
-  supabase = createClient(supabaseUrl!, supabaseAnonKey!)
-} else {
-  console.warn("Supabase environment variables are missing. Some features may not work.")
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('Supabase environment variables missing:', {
+    url: !!supabaseUrl,
+    key: !!supabaseAnonKey
+  })
+  throw new Error('Supabase configuration is incomplete. Check your .env.local file.')
 }
 
-export { supabase }
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+  }
+})
+
+// Verificar a conexão
+supabase.auth.onAuthStateChange((event, session) => {
+  console.log('Supabase auth event:', event, !!session)
+})
 

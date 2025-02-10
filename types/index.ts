@@ -1,38 +1,41 @@
 export type UserRole = "admin" | "organizer" | "player"
 
 export interface User {
-  id: string
-  name: string
-  email: string
-  phone: string
-  nickname?: string
-  roles: UserRole[]
+  id: string;
+  email: string;
+  created_at: string;
 }
 
 export interface Community {
-  id: string
-  name: string
-  adminId: string
-  whatsappGroupId?: string
-  players: string[] // Array of player IDs
+  id: string;
+  name: string;
+  description: string;
+  owner_id: string;
+  created_at: string;
 }
 
 export interface Competition {
-  id: string
-  name: string
-  communityId: string
-  organizerId: string
-  status: "pending" | "active" | "finished"
-  players: string[] // Array of player IDs
+  id: string;
+  name: string;
+  description: string;
+  game_id: string;
+  start_date: string;
+  end_date: string;
+  status: "pending" | "active" | "finished";
+  players: string[];
+  created_at: string;
 }
 
 export interface Game {
-  id: string
-  competitionId: string
-  team1: string[] // Array of 2 player IDs
-  team2: string[] // Array of 2 player IDs
-  status: "pending" | "active" | "finished"
-  score: [number, number] // [team1Score, team2Score]
+  id: string;
+  name: string;
+  description: string;
+  community_id: string;
+  status: "active" | "finished";
+  score: [number, number];
+  team1: string[];
+  team2: string[];
+  created_at: string;
 }
 
 export interface Match {
@@ -41,5 +44,14 @@ export interface Match {
   winner: 1 | 2 | null // 1 for team1, 2 for team2, null for draw
   points: number
   type: "simple" | "carroca" | "la-e-lo" | "cruzada" | "contagem"
+}
+
+export interface Player {
+  id: string
+  user_id: string
+  nickname: string
+  avatar_url?: string
+  community_id: string
+  created_at: string
 }
 

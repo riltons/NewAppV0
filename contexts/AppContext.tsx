@@ -1,86 +1,72 @@
 "use client"
 
-import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
-import type { User, Community, Competition, Game, Match } from "@/types"
+import { User } from "@supabase/supabase-js"
 import { supabase } from "@/lib/supabase"
+import type { Community, Player } from "@/types"
 
 interface AppContextType {
   user: User | null
-  communities: Community[]
-  competitions: Competition[]
-  games: Game[]
-  matches: Match[]
+  setUser: (user: User | null) => void
+  currentCommunity: Community | null
+  setCurrentCommunity: (community: Community | null) => void
+  currentPlayer: Player | null
+  setCurrentPlayer: (player: Player | null) => void
   loading: boolean
   error: string | null
-  setUser: (user: User | null) => void
-  addCommunity: (community: Community) => void
-  addCompetition: (competition: Competition) => void
-  addGame: (game: Game) => void
-  addMatch: (match: Match) => void
-  // Add more functions as needed
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
 
-export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export function AppProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
-  const [communities, setCommunities] = useState<Community[]>([])
-  const [competitions, setCompetitions] = useState<Competition[]>([])
-  const [games, setGames] = useState<Game[]>([])
-  const [matches, setMatches] = useState<Match[]>([])
+  const [currentCommunity, setCurrentCommunity] = useState<Community | null>(null)
+  const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetchInitialData = async () => {
-      try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser()
-        if (user) {
-          // Fetch user data, communities, competitions, etc.
-          // Update state accordingly
+    try {
+      // Verificar sessão atual
+      const initializeAuth = async () => {
+        try {
+          const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+          if (sessionError) throw sessionError
+          setUser(session?.user ?? null)
+        } catch (err: any) {
+          console.error('Error getting session:', err)
+          setError(err.message)
+        } finally {
+          setLoading(false)
         }
-      } catch (err) {
-        setError("Failed to fetch initial data")
-      } finally {
-        setLoading(false)
       }
+
+      initializeAuth()
+
+      // Escutar mudanças de autenticação
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((_event, session) => {
+        setUser(session?.user ?? null)
+      })
+
+      return () => subscription.unsubscribe()
+    } catch (err: any) {
+      console.error('Error in auth setup:', err)
+      setError(err.message)
+      setLoading(false)
     }
-
-    fetchInitialData()
   }, [])
-
-  const addCommunity = (community: Community) => {
-    setCommunities((prev) => [...prev, community])
-  }
-
-  const addCompetition = (competition: Competition) => {
-    setCompetitions((prev) => [...prev, competition])
-  }
-
-  const addGame = (game: Game) => {
-    setGames((prev) => [...prev, game])
-  }
-
-  const addMatch = (match: Match) => {
-    setMatches((prev) => [...prev, match])
-  }
 
   const value = {
     user,
-    communities,
-    competitions,
-    games,
-    matches,
+    setUser,
+    currentCommunity,
+    setCurrentCommunity,
+    currentPlayer,
+    setCurrentPlayer,
     loading,
     error,
-    setUser,
-    addCommunity,
-    addCompetition,
-    addGame,
-    addMatch,
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
